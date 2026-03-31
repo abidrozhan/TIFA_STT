@@ -1,0 +1,322 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03-12T16:45:39.329808",
+  "total_samples": 45,
+  "samples": [
+    {
+      "text": "halo kamu siapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:36:52.467811",
+      "user_corrected": false
+    },
+    {
+      "text": "halo kamu siapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:37:03.993580",
+      "user_corrected": false
+    },
+    {
+      "text": "bdia besaryah ituk badu dan indil inamuka",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:37:28.929110",
+      "user_corrected": false
+    },
+    {
+      "text": "baga pupu pos unpuni s menikasat kakaan",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:37:48.613426",
+      "user_corrected": false
+    },
+    {
+      "text": "halo kamu siapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:38:11.651609",
+      "user_corrected": false
+    },
+    {
+      "text": "tomaaku kuk lukulkani semaya",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:38:36.656488",
+      "user_corrected": false
+    },
+    {
+      "text": "na hari ini cuacanya di mana",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:39:01.396363",
+      "user_corrected": false
+    },
+    {
+      "text": "toto mungkin gandi di kunludiini",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:39:26.665196",
+      "user_corrected": false
+    },
+    {
+      "text": "kamu bisa bantu agunggar",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:39:52.046253",
+      "user_corrected": false
+    },
+    {
+      "text": "emusiapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:40:15.024697",
+      "user_corrected": false
+    },
+    {
+      "text": "halo halo nya",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T14:49:18.778194",
+      "user_corrected": false
+    },
+    {
+      "text": "banyang ke dengara iininanya anaaajing pdari tenbogan abeli miu okuan ini telau megingi lok ikakat da deaku",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T16:45:28.118129",
+      "user_corrected": false
+    },
+    {
+      "text": "tinak yadiaaduan i auhao ii",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:05:00.993288",
+      "user_corrected": false
+    },
+    {
+      "text": "halo nama namalu siapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:05:25.589340",
+      "user_corrected": false
+    },
+    {
+      "text": "tiva itu apa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:06:38.963507",
+      "user_corrected": false
+    },
+    {
+      "text": "di mana kabar kamu",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:07:51.052725",
+      "user_corrected": false
+    },
+    {
+      "text": "kabarku baik umut kamu gai mana sekarang",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:09:16.516553",
+      "user_corrected": false
+    },
+    {
+      "text": "oke o bagaimana cuaca hari ini",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:10:47.780477",
+      "user_corrected": false
+    },
+    {
+      "text": "nama kamu siapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:12:10.905081",
+      "user_corrected": false
+    },
+    {
+      "text": "tva itu kepanjang annya apa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:13:45.797840",
+      "user_corrected": false
+    },
+    {
+      "text": "oke ang sekarang jam berapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-13T17:15:11.696524",
+      "user_corrected": false
+    },
+    {
+      "text": "a idini",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:54:39.290623",
+      "user_corrected": false
+    },
+    {
+      "text": "halo apa kabar",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:55:04.039028",
+      "user_corrected": false
+    },
+    {
+      "text": "saya ingin memesan makanan ejawa kejawaban",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:55:39.181002",
+      "user_corrected": false
+    },
+    {
+      "text": "saya ingin memesan makanan",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:56:09.753106",
+      "user_corrected": false
+    },
+    {
+      "text": "saya ingin memesan makanan apakah bisa lewat kamu",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:56:41.708747",
+      "user_corrected": false
+    },
+    {
+      "text": "t jadi kamu itungga bisa memesankan makanan tambahkan a jadi nooletsia da mengerti balas indonesha",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:57:22.218009",
+      "user_corrected": false
+    },
+    {
+      "text": "saya sangat senang hari ini",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:57:46.303068",
+      "user_corrected": false
+    },
+    {
+      "text": "wah saya sangat sena hari ini",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:58:13.330070",
+      "user_corrected": false
+    },
+    {
+      "text": "wah saya sangat senang hari ini",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T12:58:38.008780",
+      "user_corrected": false
+    },
+    {
+      "text": "memberbuda kai airhalo hnama kamu siapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T13:45:56.395301",
+      "user_corrected": false
+    },
+    {
+      "text": "sering halo siapa nama kamu",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:29:31.695426",
+      "user_corrected": false
+    },
+    {
+      "text": "kamu tahu ngga kenapa",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:30:42.476340",
+      "user_corrected": false
+    },
+    {
+      "text": "keemaksudku aku senang bangat hari ini kamu taungga kenapa aku senang",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:32:14.489166",
+      "user_corrected": false
+    },
+    {
+      "text": "oke sekarang cuacanya di mana ya bagus sya tongga solya menjuga labi senang nih tolong pradiksi dong",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:33:54.388609",
+      "user_corrected": false
+    },
+    {
+      "text": "aku lagi serdihi dara jara centeng di bala ta cobeduwang kasih papun degara apau terhidur agai",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:35:31.329893",
+      "user_corrected": false
+    },
+    {
+      "text": "coba hibur aku pekai pantun",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:36:55.514584",
+      "user_corrected": false
+    },
+    {
+      "text": "puisi jangan bikin pulisi bikin bantun yang baik akhirnya tur sama okei",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:38:18.892468",
+      "user_corrected": false
+    },
+    {
+      "text": "kamu bisa bahasa sundangga kalau bisa coba santa hindong di mana sih bahasa sundah itu",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:39:46.763668",
+      "user_corrected": false
+    },
+    {
+      "text": "dini saya kasih satu bahasa sunda aku mau makan bahasa sundanya aing hayang da har hei",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:41:13.301930",
+      "user_corrected": false
+    },
+    {
+      "text": "oke terima kasihl bekar ini cukup nanti kitangkobro lagia",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-01-14T14:42:43.097489",
+      "user_corrected": false
+    },
+    {
+      "text": "dilo meras mudalah mena labuka ian",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-03-12T16:18:45.248974",
+      "user_corrected": false
+    },
+    {
+      "text": "ku karenak di mugal mobul adanya tektelepon mgu egugun",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-03-12T16:19:34.817097",
+      "user_corrected": false
+    },
+    {
+      "text": "mudi ini ligu",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-03-12T16:19:59.200830",
+      "user_corrected": false
+    },
+    {
+      "text": "lasmia didibagus da dula mahadi kanya itu dia panas bengah di leni berital ituliuk ke kelasnya togi neguru lewan",
+      "audio_emotion": "happy",
+      "final_emotion": "neutral",
+      "timestamp": "2026-03-12T16:44:57.686107",
+      "user_corrected": false
+    }
+  ]
+}

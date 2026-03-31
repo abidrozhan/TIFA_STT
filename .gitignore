@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Data/temp files
+data/response_*.mp3
+data/response_*.wav
+data/temp_*.mp3
+data/emotion_samples/
+
+# Models (too large for github)
+wav2vec2_checkpoints/
+data/models/*.joblib
+
+# Sessions & knowledge (user-specific data)
+data/sessions/
+data/knowledge.json
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
