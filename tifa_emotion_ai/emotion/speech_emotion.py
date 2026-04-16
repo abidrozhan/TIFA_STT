@@ -35,7 +35,7 @@ class SpeechEmotionRecognizer:
         Args:
             model_source: SpeechBrain model source path/name
         """
-        self.model_source = model_source or config.EMOTION_MODEL
+        self.model_source = model_source or "speechbrain/emotion-recognition-wav2vec2-IEMOCAP"
         self.classifier = None
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         

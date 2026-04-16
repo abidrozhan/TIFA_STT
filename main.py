@@ -12,12 +12,12 @@ CARA MENJALANKAN:
 
 ALUR KERJA PIPELINE:
    1. Rekam suara pengguna dari mikrofon
-   2. Konversi suara ke teks (wav2vec2 - offline, tidak perlu internet)
-   3. Deteksi emosi dari audio (SpeechBrain)
-   4. Klasifikasi emosi final (trainable classifier - belajar terus-menerus)
+   2. Konversi suara ke teks (Faster-Whisper - offline)
+   3. Deteksi emosi dari teks (keyword-based + trainable classifier)
+   4. Cek template response (jika cocok → skip Ollama, langsung jawab)
    5. Generate respons dengan LLaMA (via Ollama - lokal di PC)
    6. Sintesis suara dengan emosi yang sesuai (Coqui/Edge TTS)
-   7. Putar audio respons ke speaker
+   7. Kirim audio via WebSocket ke remote UI + putar di speaker lokal
 
 PERSYARATAN:
    - Python 3.9+
@@ -26,7 +26,7 @@ PERSYARATAN:
    - Mikrofon dan speaker
 
 Author: TIFA Team
-Version: 2.0.0
+Version: 2.1.0
 """
 
 import sys
@@ -51,11 +51,13 @@ from tifa_emotion_ai.utils import (
     setup_logging, print_header, print_status, 
     print_emotion, console, format_duration
 )
-from tifa_emotion_ai.stt import Wav2VecSTT, AudioProcessor
+from tifa_emotion_ai.stt import WhisperSTT, AudioProcessor
 from tifa_emotion_ai.emotion import SpeechEmotionRecognizer, EmotionClassifier, EmotionDataset
 from tifa_emotion_ai.llm import OllamaClient
 from tifa_emotion_ai.tts import EmotionTTS
 from tifa_emotion_ai.ws_client import TIFAWebSocketClient
+from tifa_emotion_ai.db_client import TIFADatabase
+from tifa_emotion_ai.llm.prompts import QUICK_RESPONSES, load_templates_from_db
 
 
 class TIFAEmotionAI:
@@ -98,6 +100,10 @@ class TIFAEmotionAI:
         self.ws_client = TIFAWebSocketClient()
         self._ws_connected = False
         
+        # Initialize Database client
+        self.db = TIFADatabase()
+        self._db_connected = False
+        
         # Initialize components (lazy loading)
         self._stt = None
         self._audio_processor = None
@@ -112,10 +118,10 @@ class TIFAEmotionAI:
         self.session_start = time.time()
     
     @property
-    def stt(self) -> Wav2VecSTT:
+    def stt(self) -> WhisperSTT:
         if self._stt is None:
-            console.print("[dim]Loading Speech-to-Text model...[/]")
-            self._stt = Wav2VecSTT()
+            console.print("[dim]Loading Faster-Whisper STT model...[/]")
+            self._stt = WhisperSTT(model_size="small")
         return self._stt
     
     @property
@@ -202,38 +208,55 @@ class TIFAEmotionAI:
             
             print_emotion(final_emotion, confidence)
             
+            # Log emotion to database
+            if self._db_connected:
+                self.db.log_emotion(final_emotion, confidence, "text", text)
+            
             # Step 5: Generate response with LLaMA
             console.print("[dim]Generating response...[/]")
             start_gen = time.time()
             
             if self.llm._check_connection():
                 response = self.llm.generate_response(text, final_emotion, confidence)
+                response_source = getattr(self.llm, 'last_response_source', 'ollama')
             else:
                 console.print("[red]Ollama tidak terhubung![/]")
                 response = "Maaf, sistem otak saya sedang tidak terhubung. Mohon cek koneksi Ollama."
+                response_source = "fallback"
             
             gen_time = time.time() - start_gen
+            gen_time_ms = int(gen_time * 1000)
             
             console.print(f"[bold green]🤖 {response}[/]")
             console.print(f"[dim](Generated in {format_duration(gen_time)})[/]")
             
+            # Log conversation to database
+            if self._db_connected:
+                self.db.log_conversation(
+                    user_input=text,
+                    tifa_response=response,
+                    emotion_code=final_emotion,
+                    emotion_confidence=confidence,
+                    response_source=response_source,
+                    response_time_ms=gen_time_ms
+                )
+            
             # Step 6: Synthesize and send/play response
             console.print("[dim]Synthesizing speech...[/]")
             
-            # Use unique filename - use .wav for WebSocket compatibility
+            # Use unique filename - Edge TTS outputs MP3 format
             timestamp = int(time.time() * 1000)
-            output_file = config.DATA_DIR / f"response_{timestamp}.wav"
+            output_file = config.DATA_DIR / f"response_{timestamp}.mp3"
             
             audio_path = self.tts.synthesize(response, final_emotion, 
                                              output_path=str(output_file))
             
             if audio_path:
-                # Try to send via WebSocket to remote UI
-                ws_sent = self._send_audio_ws(audio_path, final_emotion)
+                # Send via WebSocket to remote UI (if connected)
+                self._send_audio_ws(audio_path, final_emotion)
                 
-                if not ws_sent:
-                    # Fallback: play locally
-                    self._play_audio(audio_path)
+                # Always play locally on speaker too
+                self._play_audio(audio_path)
             
             # Step 7: Update training data (continuous learning)
             self.dataset.add_sample(text, audio_emotion, final_emotion)
@@ -251,11 +274,17 @@ class TIFAEmotionAI:
             return True
     
     def _play_audio(self, audio_path: str):
-        """Play audio file locally and clean up (fallback)"""
+        """Play audio file locally on speaker"""
         try:
             if not os.path.exists(audio_path):
+                self.logger.error(f"Audio file not found: {audio_path}")
                 return
-
+            
+            # Ensure pygame mixer is initialized
+            if not pygame.mixer.get_init():
+                pygame.mixer.init()
+            
+            console.print("[dim]🔊 Playing audio on speaker...[/]")
             pygame.mixer.music.load(audio_path)
             pygame.mixer.music.play()
             
@@ -264,6 +293,7 @@ class TIFAEmotionAI:
                 
             # Unload to release file lock
             pygame.mixer.music.unload()
+            console.print("[dim]✓ Audio playback complete[/]")
             
             # Delete temp file
             try:
@@ -273,6 +303,7 @@ class TIFAEmotionAI:
                 
         except Exception as e:
             self.logger.error(f"Audio playback error: {e}")
+            console.print(f"[red]⚠ Speaker error: {e}[/]")
     
     def _send_audio_ws(self, audio_path: str, emotion: str) -> bool:
         """
@@ -293,20 +324,23 @@ class TIFAEmotionAI:
             self.ws_client.send_expression(emotion)
             
             # Then send audio with expression
+            audio_size = os.path.getsize(audio_path) if os.path.exists(audio_path) else 0
             success = self.ws_client.send_audio_with_expression(audio_path, emotion)
             
             if success:
                 console.print(f"[bold cyan]📡 Audio sent to UI via WebSocket[/]")
-                # Clean up temp file after successful send
-                try:
-                    os.remove(audio_path)
-                except:
-                    pass
+                if self._db_connected:
+                    self.db.log_websocket("SOUND_WITH_EXPRESSION", emotion, audio_size, "success")
+            else:
+                if self._db_connected:
+                    self.db.log_websocket("SOUND_WITH_EXPRESSION", emotion, audio_size, "failed")
             
             return success
             
         except Exception as e:
             self.logger.error(f"WebSocket send error: {e}")
+            if self._db_connected:
+                self.db.log_websocket("SOUND_WITH_EXPRESSION", emotion, 0, "failed", str(e))
             return False
     
     def run_conversation_loop(self):
@@ -321,7 +355,7 @@ class TIFAEmotionAI:
         # Tampilkan header dan info sistem
         print_header(
             "TIFA Robot - Emotion-Aware AI v2.0",
-            "Powered by wav2vec2, SpeechBrain, LLaMA, Coqui TTS"
+            "Powered by Faster-Whisper, SpeechBrain, LLaMA, Coqui TTS"
         )
         
         # Connect WebSocket
@@ -332,14 +366,33 @@ class TIFAEmotionAI:
         else:
             console.print("[yellow]⚠ WebSocket not available. Audio will play locally.[/]")
         
+        # Connect Database
+        console.print("[dim]Connecting to database...[/]")
+        self._db_connected = self.db.connect()
+        if self._db_connected:
+            console.print(f"[bold green]💾 Database connected! Session: {self.db.session_id}[/]")
+            
+            # Seed templates to DB (only inserts if not exists)
+            self.db.seed_templates(QUICK_RESPONSES)
+            
+            # Load templates from DB (editable via DBeaver)
+            db_templates = self.db.get_response_templates()
+            if db_templates:
+                load_templates_from_db(db_templates)
+                console.print(f"[dim]  Loaded {sum(len(v) for v in db_templates.values())} templates from database[/]")
+        else:
+            console.print("[yellow]⚠ Database not available. Using hardcoded templates.[/]")
+        
         # Tampilkan komponen yang digunakan
         console.print("[bold]Komponen:[/]")
-        console.print(f"  • STT: wav2vec2")
-        console.print(f"  • Emotion: SpeechBrain + Trainable Classifier")
+        console.print(f"  • STT: Faster-Whisper (small)")
+        console.print(f"  • Emotion: Text-based + Trainable Classifier")
         console.print(f"  • LLM: {config.OLLAMA_MODEL}")
         console.print(f"  • TTS: {self.tts.engine_name}")
         ws_status = "WebSocket (Remote UI)" if self._ws_connected else "Local Speaker"
         console.print(f"  • Output: {ws_status}")
+        db_status = "PostgreSQL (Cloud)" if self._db_connected else "Offline"
+        console.print(f"  • Database: {db_status}")
         console.print()
         console.print("[yellow]Tekan Ctrl+C untuk berhenti[/]")
         console.print("-" * 60)
@@ -367,6 +420,11 @@ class TIFAEmotionAI:
         if self._ws_connected:
             self.ws_client.close()
             console.print("[dim]WebSocket disconnected[/]")
+        
+        # Close Database
+        if self._db_connected:
+            self.db.close()
+            console.print("[dim]Database disconnected[/]")
         
         # Save training data
         self.dataset.save()

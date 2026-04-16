@@ -10,7 +10,7 @@ import requests
 
 from ..config import config
 from ..utils import get_logger
-from .prompts import EmotionPromptBuilder
+from .prompts import EmotionPromptBuilder, get_quick_response
 from .context import ConversationContext
 from .knowledge_memory import KnowledgeMemory
 
@@ -103,6 +103,16 @@ class OllamaClient:
         Returns:
             Generated response text
         """
+        # Check for quick template patterns first (faster, no Ollama needed)
+        quick = self._check_quick_patterns(user_text, emotion)
+        if quick:
+            logger.info("Using quick template response")
+            self._update_context(user_text, emotion, quick)
+            self.last_response_source = "template"
+            return quick
+        
+        self.last_response_source = "ollama"
+        
         try:
             # Get relevant knowledge for this query
             knowledge_context = self.knowledge.get_knowledge_context(user_text)
@@ -241,14 +251,38 @@ class OllamaClient:
             logger.error(f"Stream error: {e}")
     
     def _check_quick_patterns(self, text: str, emotion: str) -> Optional[str]:
-        """Check for quick response patterns"""
-        text_lower = text.lower()
+        """Check for quick response patterns (skip Ollama for simple inputs)"""
+        text_lower = text.lower().strip()
+        word_count = len(text_lower.split())
         
-        # Greeting patterns
-        greetings = ["halo", "hai", "hello", "hi", "selamat pagi", "selamat siang", 
-                     "selamat sore", "selamat malam", "assalamualaikum", "hey"]
-        if any(g in text_lower for g in greetings) and len(text_lower.split()) < 5:
+        # Only use templates for short/simple inputs (less than 6 words)
+        if word_count > 6:
+            return None
+        
+        # Time-specific greetings (check first, more specific)
+        if "selamat pagi" in text_lower or "pagi" == text_lower:
+            return get_quick_response("pagi", emotion)
+        
+        if "selamat siang" in text_lower or "siang" == text_lower:
+            return get_quick_response("siang", emotion)
+        
+        if "selamat sore" in text_lower or "sore" == text_lower:
+            return get_quick_response("sore", emotion)
+        
+        if "selamat malam" in text_lower or "malam" == text_lower:
+            return get_quick_response("malam", emotion)
+        
+        # General greeting patterns
+        greetings = ["halo", "hai", "hello", "hi", "hey", 
+                     "assalamualaikum", "assalamu'alaikum", "apa kabar"]
+        if any(g in text_lower for g in greetings) and word_count < 5:
             return get_quick_response("greeting", emotion)
+        
+        # How are you patterns
+        how_are_you = ["apa kabar", "gimana kabar", "kabar baik", "how are you",
+                       "baik baik saja", "kamu baik"]
+        if any(h in text_lower for h in how_are_you):
+            return get_quick_response("how_are_you", emotion)
         
         # Thanks patterns
         thanks = ["terima kasih", "makasih", "thanks", "thank you", "trims", "tengkyu"]
@@ -256,8 +290,8 @@ class OllamaClient:
             return get_quick_response("thanks", emotion)
         
         # Goodbye patterns
-        goodbye = ["sampai jumpa", "bye", "dah", "dadah", "selamat tinggal", 
-                   "see you", "sampai nanti"]
+        goodbye = ["sampai jumpa", "bye", "dadah", "selamat tinggal", 
+                   "see you", "sampai nanti", "pamit"]
         if any(g in text_lower for g in goodbye):
             return get_quick_response("goodbye", emotion)
         

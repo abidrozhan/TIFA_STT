@@ -222,7 +222,7 @@ Pengguna berkata dengan emosi {emotion.upper()} ({emotion_id}): "{user_text}"
 Berikan respons singkat (1-2 kalimat) dalam Bahasa Indonesia yang sesuai dengan emosi mereka:"""
 
 
-# Predefined responses for common patterns
+# Predefined responses for common patterns (skip Ollama, instant response)
 QUICK_RESPONSES = {
     "greeting": {
         "happy": "Halo! Senang sekali melihatmu bahagia hari ini! Ada yang bisa TIFA bantu?",
@@ -232,6 +232,42 @@ QUICK_RESPONSES = {
         "fear": "Halo, jangan khawatir, kamu aman bersamaku. Ada yang mengganggumu?",
         "surprise": "Halo! Wah, kamu kelihatan terkejut! Ada apa nih?",
         "disgust": "Halo, sepertinya ada yang tidak nyaman ya? Ceritakan saja."
+    },
+    "pagi": {
+        "happy": "Selamat pagi! Wah, pagi yang cerah seperti senyummu! Ada yang bisa dibantu?",
+        "sad": "Selamat pagi... Semoga hari ini lebih baik dari kemarin ya.",
+        "angry": "Selamat pagi. Semoga pagi ini bisa menenangkan hatimu.",
+        "neutral": "Selamat pagi! Semoga harimu menyenangkan. Ada yang bisa TIFA bantu?",
+        "fear": "Selamat pagi! Tenang, hari baru berarti kesempatan baru.",
+        "surprise": "Selamat pagi! Ada kejutan apa di pagi ini?",
+        "disgust": "Selamat pagi. Semoga pagi ini lebih baik ya."
+    },
+    "siang": {
+        "happy": "Selamat siang! Semangat terus ya, senang melihatmu ceria!",
+        "sad": "Selamat siang... Jangan sedih, aku di sini menemanimu.",
+        "angry": "Selamat siang. Tarik nafas dulu ya, ada yang bisa aku bantu?",
+        "neutral": "Selamat siang! Sudah makan belum? Ada yang bisa TIFA bantu?",
+        "fear": "Selamat siang! Jangan khawatir, semua akan baik-baik saja.",
+        "surprise": "Selamat siang! Wah, kaget ya? Ada apa nih?",
+        "disgust": "Selamat siang. Ada yang mengganggu? Cerita saja."
+    },
+    "sore": {
+        "happy": "Selamat sore! Sore yang indah ya, semoga harimu tetap menyenangkan!",
+        "sad": "Selamat sore... Hari sudah sore, semoga bebanmu sedikit terangkat.",
+        "angry": "Selamat sore. Istirahat dulu ya, jangan terlalu tegang.",
+        "neutral": "Selamat sore! Ada yang bisa TIFA bantu di sore ini?",
+        "fear": "Selamat sore! Tenang ya, sebentar lagi bisa istirahat.",
+        "surprise": "Selamat sore! Ada hal menarik di sore ini?",
+        "disgust": "Selamat sore. Semoga sorenya lebih nyaman ya."
+    },
+    "malam": {
+        "happy": "Selamat malam! Senang melihatmu bahagia di malam ini!",
+        "sad": "Selamat malam... Istirahat yang cukup ya, besok hari baru.",
+        "angry": "Selamat malam. Semoga tidur malam ini menenangkan hatimu.",
+        "neutral": "Selamat malam! Ada yang bisa TIFA bantu sebelum istirahat?",
+        "fear": "Selamat malam! Jangan takut, semua akan baik-baik saja.",
+        "surprise": "Selamat malam! Wah, ada apa di malam ini?",
+        "disgust": "Selamat malam. Semoga malamnya nyaman ya."
     },
     "thanks": {
         "happy": "Sama-sama! Senang bisa membantu, semoga harimu menyenangkan terus ya!",
@@ -250,23 +286,58 @@ QUICK_RESPONSES = {
         "fear": "Sampai jumpa. Tenang ya, semuanya akan baik-baik saja.",
         "surprise": "Sampai jumpa! Semoga ada kejutan menyenangkan lagi nanti!",
         "disgust": "Sampai jumpa. Semoga kamu merasa lebih nyaman nanti."
+    },
+    "how_are_you": {
+        "happy": "Aku baik banget! Terima kasih sudah bertanya. Kamu sendiri gimana?",
+        "sad": "Aku baik... Yang penting, kamu gimana? Ada yang bisa aku bantu?",
+        "angry": "Aku baik. Aku lebih khawatir sama kamu, ada apa nih?",
+        "neutral": "Aku baik! Terima kasih sudah bertanya. Ada yang bisa dibantu?",
+        "fear": "Aku baik kok. Yang penting kamu jangan khawatir, ada aku di sini.",
+        "surprise": "Aku baik! Kamu sendiri gimana? Kok kaget gitu?",
+        "disgust": "Aku baik. Kamu kelihatan nggak nyaman, ada apa?"
     }
 }
+
+# Templates loaded from database (overrides QUICK_RESPONSES)
+_DB_TEMPLATES = {}
+
+
+def load_templates_from_db(db_templates: dict):
+    """
+    Load templates from database to override hardcoded ones.
+    Call this on startup after DB connects.
+    
+    Args:
+        db_templates: Dict from TIFADatabase.get_response_templates()
+    """
+    global _DB_TEMPLATES
+    _DB_TEMPLATES = db_templates
 
 
 def get_quick_response(pattern: str, emotion: str) -> Optional[str]:
     """
-    Get predefined quick response for common patterns.
+    Get quick response for common patterns.
+    Checks database templates first, then falls back to hardcoded.
     
     Args:
-        pattern: Pattern type (greeting, thanks, goodbye)
+        pattern: Pattern type (greeting, pagi, siang, sore, malam, thanks, goodbye, how_are_you)
         emotion: User's emotion
     
     Returns:
         Response text or None if not found
     """
+    emotion = emotion.lower()
+    
+    # Check DB templates first (editable via DBeaver)
+    if pattern in _DB_TEMPLATES:
+        if emotion in _DB_TEMPLATES[pattern]:
+            return _DB_TEMPLATES[pattern][emotion]
+        return _DB_TEMPLATES[pattern].get("neutral")
+    
+    # Fallback to hardcoded templates
     if pattern in QUICK_RESPONSES:
-        emotion = emotion.lower()
         if emotion in QUICK_RESPONSES[pattern]:
             return QUICK_RESPONSES[pattern][emotion]
+        return QUICK_RESPONSES[pattern].get("neutral")
+    
     return None

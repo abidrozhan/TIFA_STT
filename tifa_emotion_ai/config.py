@@ -39,14 +39,12 @@ class Config:
         return self.DATA_DIR / "training_data"
     
     # ==================== STT Settings ====================
-    # wav2vec2 model for Indonesian speech recognition
-    STT_MODEL: str = "indonesian-nlp/wav2vec2-large-xlsr-indonesian"
-    STT_PROCESSOR: str = "indonesian-nlp/wav2vec2-large-xlsr-indonesian"
+    # Faster-Whisper for Indonesian speech recognition
+    STT_MODEL_SIZE: str = "small"  # tiny/base/small/medium
     SAMPLE_RATE: int = 16000
     
     # ==================== Emotion Recognition ====================
-    # SpeechBrain model for emotion from audio
-    EMOTION_MODEL: str = "speechbrain/emotion-recognition-wav2vec2-IEMOCAP"
+    # Text-based emotion detection (keyword analysis)
     CONFIDENCE_THRESHOLD: float = 0.5
     
     # Supported emotions
@@ -66,7 +64,7 @@ class Config:
     })
     
     # ==================== LLM Settings ====================
-    OLLAMA_MODEL: str = "llama3.2:1b"  # Use 1b to prevent RAM crash
+    OLLAMA_MODEL: str = "llama3.2:3b"  # 3b for better quality
     OLLAMA_HOST: str = "http://localhost:11434"
     MAX_CONTEXT_TURNS: int = 5
     RESPONSE_LANGUAGE: str = "Indonesian"

@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "last_updated": "2026-03-12T16:45:39.329808",
-  "total_samples": 45,
+  "last_updated": "2026-04-15T15:15:11.723781",
+  "total_samples": 58,
   "samples": [
     {
       "text": "halo kamu siapa",
@@ -316,6 +316,97 @@
       "audio_emotion": "happy",
       "final_emotion": "neutral",
       "timestamp": "2026-03-12T16:44:57.686107",
+      "user_corrected": false
+    },
+    {
+      "text": "Halo? Halo? Halo?",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-07T20:31:07.998568",
+      "user_corrected": false
+    },
+    {
+      "text": "halo, nama kamu siapa?",
+      "audio_emotion": "surprise",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-07T20:31:50.587264",
+      "user_corrected": false
+    },
+    {
+      "text": "tes, halo nama kamu siapa? 1,2,3 beragam-beragam tuh yang ngomong itu",
+      "audio_emotion": "surprise",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-13T14:48:04.601721",
+      "user_corrected": false
+    },
+    {
+      "text": "tes halo aku habis",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-13T14:49:10.370588",
+      "user_corrected": false
+    },
+    {
+      "text": "Selamat siang",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T14:29:37.272191",
+      "user_corrected": false
+    },
+    {
+      "text": "Selamat malam",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T14:43:13.278128",
+      "user_corrected": false
+    },
+    {
+      "text": "Selamat siang.",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T14:43:29.007250",
+      "user_corrected": false
+    },
+    {
+      "text": "Selamat malam",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T15:12:32.713771",
+      "user_corrected": false
+    },
+    {
+      "text": "Selamat siam",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T15:12:59.057983",
+      "user_corrected": false
+    },
+    {
+      "text": "Selamat siang, Tifa.",
+      "audio_emotion": "neutral",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T15:13:33.461111",
+      "user_corrected": false
+    },
+    {
+      "text": "diva itu artinya apa ya?",
+      "audio_emotion": "surprise",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T15:14:04.484113",
+      "user_corrected": false
+    },
+    {
+      "text": "Tifa itu artinya apa? Tifa, artinya apa?",
+      "audio_emotion": "surprise",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T15:14:36.229111",
+      "user_corrected": false
+    },
+    {
+      "text": "hari ini, hari apa dan jam berapa sekarang?",
+      "audio_emotion": "surprise",
+      "final_emotion": "neutral",
+      "timestamp": "2026-04-15T15:15:11.265079",
       "user_corrected": false
     }
   ]

@@ -1,10 +1,10 @@
 """
 TIFA Emotion AI - STT Module
 ============================
-Speech-to-Text components using wav2vec2.
+Speech-to-Text using Faster-Whisper (offline).
 """
 
-from .wav2vec_stt import Wav2VecSTT
+from .whisper_stt import WhisperSTT
 from .audio_processor import AudioProcessor
 
-__all__ = ["Wav2VecSTT", "AudioProcessor"]
+__all__ = ["WhisperSTT", "AudioProcessor"]

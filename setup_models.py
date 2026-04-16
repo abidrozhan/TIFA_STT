@@ -7,10 +7,12 @@ Run this once before using the main application:
     python setup_models.py
 
 This will:
-1. Download wav2vec2 STT model
-2. Download SpeechBrain emotion model  
-3. Generate emotion reference audio samples
-4. Check Ollama and LLaMA availability
+1. Check Python version and dependencies
+2. Setup directories
+3. Download Faster-Whisper model
+4. Generate emotion reference audio samples
+5. Check Ollama and LLaMA availability
+6. Check TTS engines
 """
 
 import sys
@@ -41,9 +43,10 @@ def check_dependencies():
     print("\n[Step 1] Checking dependencies...")
     
     required = [
-        "torch", "transformers", "speechbrain", "librosa",
-        "sounddevice", "numpy", "scipy", "edge_tts",
-        "scikit-learn", "joblib", "pygame", "rich", "pydantic", "ollama"
+        "numpy", "scipy", "sounddevice", "pygame",
+        "faster_whisper", "scikit-learn", "joblib",
+        "edge_tts", "rich", "pydantic", "ollama",
+        "websocket"
     ]
     
     missing = []
@@ -77,54 +80,30 @@ def setup_directories():
 
 
 def download_stt_model():
-    """Download wav2vec2 STT model"""
-    print("\n[Step 3] Downloading Speech-to-Text model...")
+    """Download Faster-Whisper model"""
+    print("\n[Step 3] Downloading Faster-Whisper model...")
     print("  This may take a few minutes...")
     
     try:
-        from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
+        from faster_whisper import WhisperModel
         from tifa_emotion_ai.config import config
         
-        print(f"  Downloading: {config.STT_MODEL}")
+        model_size = config.STT_MODEL_SIZE
+        print(f"  Downloading: whisper-{model_size}")
         
-        processor = Wav2Vec2Processor.from_pretrained(config.STT_MODEL)
-        model = Wav2Vec2ForCTC.from_pretrained(config.STT_MODEL)
+        model = WhisperModel(model_size, device="cpu", compute_type="int8")
         
-        print("  ✓ wav2vec2 model downloaded")
+        print(f"  ✓ Faster-Whisper ({model_size}) downloaded")
         return True
     
     except Exception as e:
         print(f"  ✗ Error: {e}")
-        return False
-
-
-def download_emotion_model():
-    """Download SpeechBrain emotion model"""
-    print("\n[Step 4] Downloading Emotion Recognition model...")
-    print("  This may take a few minutes...")
-    
-    try:
-        from speechbrain.inference.classifiers import EncoderClassifier
-        from tifa_emotion_ai.config import config
-        
-        print(f"  Downloading: {config.EMOTION_MODEL}")
-        
-        classifier = EncoderClassifier.from_hparams(
-            source=config.EMOTION_MODEL
-        )
-        
-        print("  ✓ Emotion model downloaded")
-        return True
-    
-    except Exception as e:
-        print(f"  ✗ Error: {e}")
-        print("  Try: pip install speechbrain")
         return False
 
 
 def generate_emotion_samples():
     """Generate emotion reference audio samples"""
-    print("\n[Step 5] Generating emotion reference audio...")
+    print("\n[Step 4] Generating emotion reference audio...")
     
     try:
         from tifa_emotion_ai.tts.emotion_voice import EmotionVoiceManager
@@ -150,7 +129,7 @@ def generate_emotion_samples():
 
 def check_ollama():
     """Check Ollama installation and model"""
-    print("\n[Step 6] Checking Ollama...")
+    print("\n[Step 5] Checking Ollama...")
     
     from tifa_emotion_ai.config import config
     
@@ -193,7 +172,7 @@ def check_ollama():
 
 def check_tts():
     """Check TTS availability"""
-    print("\n[Step 7] Checking TTS engines...")
+    print("\n[Step 6] Checking TTS engines...")
     
     # Check Edge TTS
     try:
@@ -212,6 +191,21 @@ def check_tts():
         print("    Run: pip install TTS")
 
 
+def check_websocket():
+    """Check WebSocket connectivity"""
+    print("\n[Step 7] Checking WebSocket...")
+    
+    try:
+        import websocket
+        ws = websocket.create_connection("wss://tifa-ws.forgixrobotic.com", timeout=10)
+        ws.close()
+        print("  ✓ WebSocket connected")
+        return True
+    except Exception as e:
+        print(f"  ⚠ WebSocket: {e}")
+        return False
+
+
 def main():
     """Main setup function"""
     check_python_version()
@@ -223,10 +217,10 @@ def main():
     setup_directories()
     
     stt_ok = download_stt_model()
-    emotion_ok = download_emotion_model()
     samples_ok = generate_emotion_samples()
     ollama_ok = check_ollama()
     check_tts()
+    ws_ok = check_websocket()
     
     # Summary
     print("\n" + "=" * 60)
@@ -234,10 +228,10 @@ def main():
     print("=" * 60)
     
     results = [
-        ("Speech-to-Text", stt_ok),
-        ("Emotion Recognition", emotion_ok),
+        ("Speech-to-Text (Whisper)", stt_ok),
         ("Reference Audio", samples_ok),
         ("Ollama/LLaMA", ollama_ok),
+        ("WebSocket", ws_ok),
     ]
     
     all_ok = True
